@@ -6,7 +6,9 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.PointF;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -79,13 +81,10 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         private OnLayoutChangeListener mChildLayoutChangeListener = new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Log.d(TAG, "Child view of Wrapper changed layout, going to ask to rebind.");
                 Assertions.assertCondition(v instanceof RecyclerViewItemView, "Child view must be of type RecyclerViewItemView");
-                //mAdapter.notifyItemChanged(((RecyclerViewItemView)v).getItemIndex());
                 post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "did asked request layout");
                         requestLayout();
                         getParent().requestLayout();
                     }
@@ -119,15 +118,12 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                 // and set with NativeViewHierarchyManager
                 View child = getChildAt(0);
                 setMeasuredDimension(child.getMeasuredWidth(), child.getMeasuredHeight());
-                Log.d(TAG, String.format("Wrapper asked to be measured, replied with child dimensions: %d, %d.", child.getMeasuredWidth(), child.getMeasuredHeight()));
             } else {
                 setMeasuredDimension(50, 150);
-                Log.d(TAG, "Wrapper asked to be measured, NO CHILD FOUND");
-                //Assertions.assertUnreachable("RecyclableWrapperView measured but no view attached");
             }
         }
 
-        public ReactListAdapter getAdapter(){
+        public ReactListAdapter getAdapter() {
             return mAdapter;
         }
     }
@@ -300,7 +296,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             final int itemIndex = child.getItemIndex();
 
             notifyItemChanged(itemIndex);
-            Log.d(TAG, String.format("Added child view at index %d for position %d", index, itemIndex));
         }
 
         public void removeViewAt(int index) {
@@ -310,9 +305,11 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
                 child.removeOnLayoutChangeListener(mChildLayoutChangeListener);
                 updateTotalChildrenHeight(-child.getMeasuredHeight());
-
-                Log.d(TAG, String.format("Removed child view at index %d for position %d", index, child.getItemIndex()));
             }
+        }
+
+        public int getViewCount() {
+            return mViews.size();
         }
 
         private void updateTotalChildrenHeight(int delta) {
@@ -324,7 +321,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
         @Override
         public ConcreteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Log.d(TAG, "ViewHolder created");
             return new ConcreteViewHolder(new RecyclableWrapperViewGroup(parent.getContext(), this));
         }
 
@@ -333,14 +329,10 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             RecyclableWrapperViewGroup vg = (RecyclableWrapperViewGroup) holder.itemView;
             View row = getViewByItemIndex(position);
             if (row != null && row.getParent() != vg) {
-                Log.d(TAG, "Binding view for position " + position);
-                if (row.getParent() != null){
-                    ((ViewGroup)row.getParent()).removeView(row);
-                    Log.d(TAG, "View for position " + position + " was already connected to a parent.");
+                if (row.getParent() != null) {
+                    ((ViewGroup) row.getParent()).removeView(row);
                 }
                 vg.addView(row, 0);
-            } else {
-                Log.d(TAG, "Binding view for position " + position + " but it was not found in the index.");
             }
         }
 
@@ -357,7 +349,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
         public void setItemCount(int itemCount) {
             this.mItemCount = itemCount;
-            Log.d(TAG, String.format("Set item count to %d", itemCount));
         }
 
         public View getView(int index) {
@@ -365,8 +356,8 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         }
 
         public RecyclerViewItemView getViewByItemIndex(int position) {
-            for (int i=0; i<mViews.size(); i++){
-                if (mViews.get(i).getItemIndex() == position){
+            for (int i = 0; i < mViews.size(); i++) {
+                if (mViews.get(i).getItemIndex() == position) {
                     return mViews.get(i);
                 }
             }
@@ -429,8 +420,8 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                         getHeight()));
         */
 
-        final int firstIndex = ((LinearLayoutManager)getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastIndex = ((LinearLayoutManager)getLayoutManager()).findLastVisibleItemPosition();
+        final int firstIndex = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
+        final int lastIndex = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
 
         if (firstIndex != mFirstVisibleIndex || lastIndex != mLastVisibleIndex) {
             getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
@@ -453,7 +444,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     }
 
     private ReactContext getReactContext() {
-        return (ReactContext)((ContextThemeWrapper)getContext()).getBaseContext();
+        return (ReactContext) ((ContextThemeWrapper) getContext()).getBaseContext();
     }
 
     public RecyclerViewBackedScrollView(Context context) {
@@ -478,7 +469,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     }
 
     /*package*/ int getChildCountFromAdapter() {
-        return getAdapter().getItemCount();
+        return ((ReactListAdapter) getAdapter()).getViewCount();
     }
 
     /*package*/ void setItemCount(int itemCount) {
@@ -502,10 +493,9 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
     @Override
     public void requestLayout() {
-        Log.d(TAG, "requested layout to Recycler");
         super.requestLayout();
 
-        if (!mRequestedLayout){
+        if (!mRequestedLayout) {
             mRequestedLayout = true;
             this.post(new Runnable() {
                 @Override
@@ -513,17 +503,26 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                     mRequestedLayout = false;
                     layout(getLeft(), getTop(), getRight(), getBottom());
                     onLayout(false, getLeft(), getTop(), getRight(), getBottom());
-                    Log.d(TAG, "run layout in Recycler");
                 }
             });
         }
-
-        //this.layout(getLeft(), getTop(), getRight(), getBottom());
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        Log.d(TAG, "onLayout called in Recycler");
+    public void smoothScrollToPosition(int position) {
+        final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.getContext()) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+
+            @Override
+            public PointF computeScrollVectorForPosition(int targetPosition) {
+                return ((LinearLayoutManager) this.getLayoutManager()).computeScrollVectorForPosition(targetPosition);
+            }
+        };
+
+        smoothScroller.setTargetPosition(position);
+        this.getLayoutManager().startSmoothScroll(smoothScroller);
     }
 }

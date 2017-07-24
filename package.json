@@ -1,7 +1,7 @@
 
 {
   "name": "react-native-recyclerview-list",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "author": "",
   "license": "",
   "peerDependencies": {
-    "react-native": "^0.41.2"
+    "react": "16.0.0-alpha.12",
+    "react-native": "^0.45.1"
   }
 }

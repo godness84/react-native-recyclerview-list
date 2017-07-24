@@ -4,7 +4,10 @@ import javax.annotation.Nullable;
 
 import java.util.Map;
 
+import android.graphics.PointF;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.view.View;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -28,18 +32,14 @@ public class RecyclerViewBackedScrollViewManager extends
 
     public static final String REACT_CLASS = "AndroidRecyclerViewBackedScrollView";
     public static final int COMMAND_NOTIFY_ITEM_RANGE_INSERTED = 1;
+    public static final int COMMAND_NOTIFY_ITEM_RANGE_REMOVED = 2;
+    public static final int COMMAND_NOTIFY_DATASET_CHANGED = 3;
+    public static final int COMMAND_SCROLL_TO_INDEX = 4;
     private static final String TAG = "RecyclerViewManager";
 
     @Override
     public String getName() {
         return REACT_CLASS;
-    }
-
-    // TODO(8624925): Implement removeClippedSubviews support for native ListView
-
-    @ReactProp(name = "onContentSizeChange")
-    public void setOnContentSizeChange(RecyclerViewBackedScrollView view, boolean value) {
-        view.setSendContentSizeChangeEvents(value);
     }
 
     @Override
@@ -73,18 +73,21 @@ public class RecyclerViewBackedScrollViewManager extends
     public void setItemCount(RecyclerViewBackedScrollView parent, int itemCount) {
         parent.setItemCount(itemCount);
         parent.getAdapter().notifyDataSetChanged();
-        Log.d(TAG, String.format("notified data set changed"));
-
     }
 
     @Override
     public Map<String, Integer> getCommandsMap() {
-        return MapBuilder.of("notifyItemRangeInserted", COMMAND_NOTIFY_ITEM_RANGE_INSERTED);
+        return MapBuilder.of(
+            "notifyItemRangeInserted", COMMAND_NOTIFY_ITEM_RANGE_INSERTED,
+            "notifyItemRangeRemoved", COMMAND_NOTIFY_ITEM_RANGE_REMOVED,
+            "notifyDataSetChanged", COMMAND_NOTIFY_DATASET_CHANGED,
+            "scrollToIndex", COMMAND_SCROLL_TO_INDEX
+        );
     }
 
     @Override
     public void receiveCommand(
-            RecyclerViewBackedScrollView parent,
+            final RecyclerViewBackedScrollView parent,
             int commandType,
             @Nullable ReadableArray args) {
         Assertions.assertNotNull(parent);
@@ -93,13 +96,41 @@ public class RecyclerViewBackedScrollViewManager extends
             case COMMAND_NOTIFY_ITEM_RANGE_INSERTED: {
                 final int position = args.getInt(0);
                 final int count = args.getInt(1);
-                Log.d(TAG, String.format("notify item range inserted: position %d, count %d", position, count));
+                //Log.d(TAG, String.format("notify item range inserted: position %d, count %d", position, count));
 
                 RecyclerViewBackedScrollView.ReactListAdapter adapter = (RecyclerViewBackedScrollView.ReactListAdapter) parent.getAdapter();
                 adapter.setItemCount(adapter.getItemCount() + count);
-                LinearLayoutManager layoutManager = (LinearLayoutManager) parent.getLayoutManager();
-                //adapter.notifyItemRangeChanged(0, adapter.getItemCount());
                 adapter.notifyItemRangeInserted(position, count);
+                return;
+            }
+
+            case COMMAND_NOTIFY_ITEM_RANGE_REMOVED: {
+                final int position = args.getInt(0);
+                final int count = args.getInt(1);
+                //Log.d(TAG, String.format("notify item range removed: position %d, count %d", position, count));
+
+                RecyclerViewBackedScrollView.ReactListAdapter adapter = (RecyclerViewBackedScrollView.ReactListAdapter) parent.getAdapter();
+                adapter.setItemCount(adapter.getItemCount() - count);
+                adapter.notifyItemRangeRemoved(position, count);
+                return;
+            }
+
+            case COMMAND_NOTIFY_DATASET_CHANGED: {
+                final int itemCount = args.getInt(0);
+                RecyclerViewBackedScrollView.ReactListAdapter adapter = (RecyclerViewBackedScrollView.ReactListAdapter) parent.getAdapter();
+                adapter.setItemCount(itemCount);
+                parent.getAdapter().notifyDataSetChanged();
+                return;
+            }
+
+            case COMMAND_SCROLL_TO_INDEX: {
+                boolean animated = args.getBoolean(0);
+                int index = args.getInt(1);
+                if (animated) {
+                    parent.smoothScrollToPosition(index);
+                } else {
+                    parent.scrollToPosition(index);
+                }
                 return;
             }
 
