@@ -27,8 +27,7 @@ import com.github.godness84.RNRecyclerViewList.R;
  * View manager for {@link RecyclerViewBackedScrollView}.
  */
 public class RecyclerViewBackedScrollViewManager extends
-        ViewGroupManager<RecyclerViewBackedScrollView>
-        implements ReactScrollViewCommandHelper.ScrollCommandHandler<RecyclerViewBackedScrollView> {
+        ViewGroupManager<RecyclerViewBackedScrollView> {
 
     public static final String REACT_CLASS = "AndroidRecyclerViewBackedScrollView";
     public static final int COMMAND_NOTIFY_ITEM_RANGE_INSERTED = 1;
@@ -140,18 +139,6 @@ public class RecyclerViewBackedScrollViewManager extends
                         commandType,
                         getClass().getSimpleName()));
         }
-    }
-
-    @Override
-    public void scrollTo(
-            RecyclerViewBackedScrollView scrollView,
-            ReactScrollViewCommandHelper.ScrollToCommandData data) {
-        scrollView.scrollTo(data.mDestX, data.mDestY, data.mAnimated);
-    }
-
-    @Override
-    public void scrollToEnd(RecyclerViewBackedScrollView scrollView, ReactScrollViewCommandHelper.ScrollToEndCommandData data) {
-        // TODO:
     }
 
     @Override
