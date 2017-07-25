@@ -86,7 +86,9 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                     @Override
                     public void run() {
                         requestLayout();
-                        getParent().requestLayout();
+                        if (getParent() != null) {
+                            getParent().requestLayout();
+                        }
                     }
                 });
             }
