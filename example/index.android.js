@@ -27,7 +27,7 @@ function newItem() {
 export default class example extends Component {
   constructor(props) {
     super(props);
-    var data = Array(100).fill().map((e,i) => newItem());
+    var data = Array(10).fill().map((e,i) => newItem());
 
     this.state = {
       dataSource: new DataSource(data, (item, index) => item)
@@ -45,7 +45,22 @@ export default class example extends Component {
           style={{ flex: 1 }}
           dataSource={dataSource}
           renderItem={this.renderItem}
-          windowSize={20} />
+          windowSize={20}
+          initialScrollIndex={0}
+          ListHeaderComponent={(
+            <View style={{ paddingTop: 5}} />
+          )}
+          ListFooterComponent={(
+            <View style={{ paddingTop: 5}} />
+          )}
+          ListEmptyComponent={(
+            <View style={{ borderColor: '#e7e7e7', borderWidth: 1, margin: 10, padding: 20, }}>
+              <Text style={{ fontSize: 15 }}>No results.</Text>
+            </View>
+          )}
+          ItemSeparatorComponent={(
+            <View style={{ borderBottomWidth: 1, borderColor: '#e7e7e7', marginHorizontal: 5, marginVertical: 10 }} />
+          )} />
         { this.renderBottomControlPanel() }
       </View>
     );
@@ -106,7 +121,7 @@ export default class example extends Component {
 
   reset() {
     //_gCounter = 1;
-    var data = Array(100).fill().map((e,i) => newItem());
+    var data = Array(10).fill().map((e,i) => newItem());
     this.setState({
       dataSource: new DataSource(data, (item, index) => item)
     });
@@ -155,7 +170,7 @@ class Item extends Component {
         onPress={() => this.setState({
           counter: this.state.counter+1
         })}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5, marginBottom: 0, }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 5 }}>
           <Image
             source={{ uri: 'http://loremflickr.com/320/240?t=' + (item % 9) }}
             style={{
