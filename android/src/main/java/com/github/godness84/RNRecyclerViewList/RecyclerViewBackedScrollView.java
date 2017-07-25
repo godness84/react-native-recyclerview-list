@@ -128,6 +128,15 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         public ReactListAdapter getAdapter() {
             return mAdapter;
         }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            // Similarly to ReactViewGroup, we return true.
+            // In this case it is necessary in order to force the RecyclerView to intercept the touch events,
+            // in this way we can exactly know when the drag starts because "onInterceptTouchEvent"
+            // of the RecyclerView will return true.
+            return true;
+        }
     }
 
     /*package*/ static class ReactListAdapter extends Adapter<ConcreteViewHolder> {
