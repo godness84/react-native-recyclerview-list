@@ -74,6 +74,11 @@ public class RecyclerViewBackedScrollViewManager extends
         parent.getAdapter().notifyDataSetChanged();
     }
 
+    @ReactProp(name = "itemAnimatorEnabled", defaultBoolean = true)
+    public void setItemAnimatorEnabled(RecyclerViewBackedScrollView parent, boolean enabled) {
+        parent.setItemAnimatorEnabled(enabled);
+    }
+
     @Override
     public Map<String, Integer> getCommandsMap() {
         return MapBuilder.of(

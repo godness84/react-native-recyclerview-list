@@ -385,4 +385,14 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         smoothScroller.setTargetPosition(position);
         this.getLayoutManager().startSmoothScroll(smoothScroller);
     }
+
+    public void setItemAnimatorEnabled(boolean enabled) {
+        if (enabled) {
+            DefaultItemAnimator animator = new DefaultItemAnimator();
+            animator.setSupportsChangeAnimations(false);
+            setItemAnimator(animator);
+        } else {
+            setItemAnimator(null);
+        }
+    }
 }
