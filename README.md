@@ -1,7 +1,21 @@
 
 # react-native-recyclerview-list
 
-A RecyclerView implementation for ReactNative. Only for Android.
+A RecyclerView implementation for ReactNative, that overcomes some limitations of `FlatList`, `VirtualizedList` and `ListView`.
+
+## Features
+
+- **Supports native animation during adding or removal of items** (as the classic RecyclerView does)
+- **Add items at the top with no scrolling issue**: it means that you can easily implement an infinite scroll in both directions
+- **Scroll to whatever index you want**: even if you don't know the exact dimensions of your rendered items, you can scroll to any index without any scrolling issue
+- **Control the scrolling velocity**: the `velocity` param in the `scrollToIndex` method is exactly for this
+- **Initial scroll index**: specify the scroll position at startup, and there will be no flicker
+- **Low memory usage**: it renders just the visible items plus some extra items around
+
+## Caveats
+
+- It's just for Android.
+- Just vertical linear layout. No fancy layouts as grid.
 
 ## Getting started
 
