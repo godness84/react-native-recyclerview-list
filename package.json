@@ -1,8 +1,8 @@
 
 {
   "name": "react-native-recyclerview-list",
-  "version": "0.0.3",
-  "description": "",
+  "version": "0.1.0",
+  "description": "A RecyclerView implementation for React Native",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
