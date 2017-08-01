@@ -75,25 +75,28 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     static class RecyclableWrapperViewGroup extends ViewGroup {
 
         private ReactListAdapter mAdapter;
+        private int mLastMeasuredWidth;
+        private int mLastMeasuredHeight;
 
         public RecyclableWrapperViewGroup(Context context, ReactListAdapter adapter) {
             super(context);
             mAdapter = adapter;
+            mLastMeasuredHeight = 10;
+            mLastMeasuredWidth = 10;
         }
 
         private OnLayoutChangeListener mChildLayoutChangeListener = new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Assertions.assertCondition(v instanceof RecyclerViewItemView, "Child view must be of type RecyclerViewItemView");
-                post(new Runnable() {
-                    @Override
-                    public void run() {
+                int oldHeight = (oldBottom - oldTop);
+                int newHeight = (bottom - top);
+
+                if (oldHeight != newHeight) {
+                    if (getParent() != null) {
                         requestLayout();
-                        if (getParent() != null) {
-                            getParent().requestLayout();
-                        }
+                        ((View) getParent()).requestLayout();
                     }
-                });
+                };
             }
         };
 
@@ -117,14 +120,18 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            // We override measure spec and use dimensions of the children. Children is a view added
+            // from the adapter and always have a correct dimensions specified as they are calculated
+            // and set with NativeViewHierarchyManager.
+            // In case there is no view attached, we use the last measured dimensions.
+
             if (getChildCount() > 0) {
-                // We override measure spec and use dimensions of the children. Children is a view added
-                // from the adapter and always have a correct dimensions specified as they are calculated
-                // and set with NativeViewHierarchyManager
                 View child = getChildAt(0);
-                setMeasuredDimension(child.getMeasuredWidth(), child.getMeasuredHeight());
+                mLastMeasuredWidth = child.getMeasuredWidth();
+                mLastMeasuredHeight = child.getMeasuredHeight();
+                setMeasuredDimension(mLastMeasuredWidth, mLastMeasuredHeight);
             } else {
-                setMeasuredDimension(50, 150);
+                setMeasuredDimension(mLastMeasuredWidth, mLastMeasuredHeight);
             }
         }
 
@@ -148,53 +155,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         private final RecyclerViewBackedScrollView mScrollView;
         private int mItemCount = 0;
 
-        // The following `OnLayoutChangeListsner` is attached to the views stored in the adapter
-        // `mViews` array. It's used to get layout information passed to that view from css-layout
-        // and to update its layout to be enclosed in the wrapper view group.
-        private final OnLayoutChangeListener
-                mChildLayoutChangeListener = new OnLayoutChangeListener() {
-
-            @Override
-            public void onLayoutChange(
-                    View v,
-                    int left,
-                    int top,
-                    int right,
-                    int bottom,
-                    int oldLeft,
-                    int oldTop,
-                    int oldRight,
-                    int oldBottom) {
-                // We need to get layout information from css-layout to set the size of the rows correctly.
-
-                int oldHeight = (oldBottom - oldTop);
-                int newHeight = (bottom - top);
-
-                if (oldHeight != newHeight) {
-                    // Since "wrapper" view position +dimensions are not managed by NativeViewHierarchyManager
-                    // we need to ensure that the wrapper view is properly layed out as it dimension should
-                    // be updated if the wrapped view dimensions are changed.
-                    // To achieve that we call `forceLayout()` on the view modified and on `RecyclerView`
-                    // instance (which is accessible with `v.getParent().getParent()` if the view is
-                    // attached). We rely on NativeViewHierarchyManager to call `layout` on `RecyclerView`
-                    // then, which will happen once all the children of `RecyclerView` have their layout
-                    // updated. This will trigger `layout` call on attached wrapper nodes and will let us
-                    // update dimensions of them through overridden onMeasure method.
-                    // We don't care about calling this is the view is not currently attached as it would be
-                    // laid out once added to the recycler.
-                    if (v.getParent() != null
-                            && v.getParent().getParent() != null) {
-                        View wrapper = (View) v.getParent(); // native view that wraps view added to adapter
-                        wrapper.forceLayout();
-                        // wrapper.getParent() points to the recycler if the view is currently attached (it
-                        // could be in "scrape" state when it is attached to recyclable wrapper but not to
-                        // the recycler)
-                        ((View) wrapper.getParent()).forceLayout();
-                    }
-                }
-            }
-        };
-
         public ReactListAdapter(RecyclerViewBackedScrollView scrollView) {
             mScrollView = scrollView;
             //setHasStableIds(true);
@@ -202,8 +162,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
         public void addView(RecyclerViewItemView child, int index) {
             mViews.add(index, child);
-
-            child.addOnLayoutChangeListener(mChildLayoutChangeListener);
 
             final int itemIndex = child.getItemIndex();
 
@@ -214,8 +172,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             RecyclerViewItemView child = mViews.get(index);
             if (child != null) {
                 mViews.remove(index);
-
-                child.removeOnLayoutChangeListener(mChildLayoutChangeListener);
             }
         }
 
