@@ -125,8 +125,9 @@ public class RecyclerViewBackedScrollViewManager extends
             case COMMAND_SCROLL_TO_INDEX: {
                 boolean animated = args.getBoolean(0);
                 int index = args.getInt(1);
+                float msPerInch = (float) args.getDouble(2);
                 if (animated) {
-                    parent.smoothScrollToPosition(index);
+                    parent.smoothScrollToPositionWithVelocity(index, msPerInch);
                 } else {
                     parent.scrollToPosition(index);
                 }

@@ -136,6 +136,15 @@ export default class example extends Component {
   }
 
   addBelow(index) {
+    const { dataSource } = this.state;
+    if (index == dataSource.size() - 1 && this._recycler) {
+      this._recycler.scrollToIndex({
+        animated: true,
+        index: dataSource.size(),
+        velocity: 120
+      });
+    }
+
     this.state.dataSource.splice(index+1, 0, newItem());
   }
 

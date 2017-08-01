@@ -7,9 +7,12 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.PointF;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
@@ -308,7 +311,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     public RecyclerViewBackedScrollView(Context context) {
         super(new ContextThemeWrapper(context, R.style.ScrollbarRecyclerView));
         setHasFixedSize(true);
-        setItemAnimator(new NotAnimatedItemAnimator());
+        ((DefaultItemAnimator) getItemAnimator()).setSupportsChangeAnimations(false);
         setLayoutManager(new LinearLayoutManager(context));
         setAdapter(new ReactListAdapter(this));
     }
@@ -398,6 +401,10 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
     @Override
     public void smoothScrollToPosition(int position) {
+        this.smoothScrollToPositionWithVelocity(position, 0);
+    }
+
+    public void smoothScrollToPositionWithVelocity(int position, final float millisecondsPerInch) {
         final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.getContext()) {
             @Override
             protected int getVerticalSnapPreference() {
@@ -407,6 +414,15 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             @Override
             public PointF computeScrollVectorForPosition(int targetPosition) {
                 return ((LinearLayoutManager) this.getLayoutManager()).computeScrollVectorForPosition(targetPosition);
+            }
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                if (millisecondsPerInch > 0) {
+                    return millisecondsPerInch / displayMetrics.densityDpi;
+                } else {
+                    return super.calculateSpeedPerPixel(displayMetrics);
+                }
             }
         };
 
