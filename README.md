@@ -116,6 +116,7 @@ Method name           | Params                          | Description
 `set`                 | index, item                     | Set the item at the specified index
 `get`                 | index                           | Returns the item at the specified index
 `size`                |                                 | Returns the length of the array
+`setDirty`			  | 								| Forces the RecyclerViewList to render again the visible items
 
 
 
