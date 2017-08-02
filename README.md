@@ -99,8 +99,8 @@ Prop name             | Description   | Type      | Default value
 
 Method name           | Params                          | Description
 ----------------------|---------------------------------|------------
-`scrollToIndex`       | `{ index, animated, velocity }` | Scroll the list to the `index`ed item. It can be `animated`. `velocity` is the amount of pixels per inch.
-`scrollToEnd`         | `{ animated, velocity }` | Scroll to the end of the list. It can be `animated`. `velocity` is the amount of pixels per inch.
+`scrollToIndex`       | `{ index, animated, velocity }` | Scroll the list to the `index`ed item. It can be `animated`. `velocity` is the amount of milliseconds per inch.
+`scrollToEnd`         | `{ animated, velocity }` | Scroll to the end of the list. It can be `animated`. `velocity` is the amount of milliseconds per inch.
 
 # DataSource
 
