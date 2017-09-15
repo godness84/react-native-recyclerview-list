@@ -1,19 +1,25 @@
 
 {
   "name": "react-native-recyclerview-list",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A RecyclerView implementation for React Native",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/godness84/react-native-recyclerview-list.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "recyclerview",
+    "list",
+    "react-native",
   ],
   "author": "",
-  "license": "",
+  "license": "MIT",
   "peerDependencies": {
-    "react": "16.0.0-alpha.12",
-    "react-native": "^0.45.1"
+    "react": "^16.0.0-alpha.12",
+    "react-native": "^0.48.3"
   }
 }

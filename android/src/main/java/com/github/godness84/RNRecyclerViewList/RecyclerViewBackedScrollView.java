@@ -30,8 +30,10 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
+import com.facebook.react.views.scroll.VelocityHelper;
 import com.github.godness84.RNRecyclerViewList.R;
 
 /**
@@ -48,6 +50,9 @@ import com.github.godness84.RNRecyclerViewList.R;
 public class RecyclerViewBackedScrollView extends RecyclerView {
 
     private final static String TAG = "RecyclerViewBackedScrol";
+
+    private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
+    private final VelocityHelper mVelocityHelper = new VelocityHelper();
 
     /**
      * Simple implementation of {@link ViewHolder} as it's an abstract class. The only thing we need
@@ -233,16 +238,20 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
 
-        getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
-                .dispatchEvent(ScrollEvent.obtain(
-                        getId(),
-                        ScrollEventType.SCROLL,
-                        0, /* offsetX = 0, horizontal scrolling only */
-                        computeVerticalScrollOffset(),
-                        getWidth(),
-                        computeVerticalScrollRange(),
-                        getWidth(),
-                        getHeight()));
+        if (mOnScrollDispatchHelper.onScrollChanged(l, t)) {
+            getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
+                    .dispatchEvent(ScrollEvent.obtain(
+                            getId(),
+                            ScrollEventType.SCROLL,
+                            0, /* offsetX = 0, horizontal scrolling only */
+                            computeVerticalScrollOffset(),
+                            mOnScrollDispatchHelper.getXFlingVelocity(),
+                            mOnScrollDispatchHelper.getYFlingVelocity(),
+                            getWidth(),
+                            computeVerticalScrollRange(),
+                            getWidth(),
+                            getHeight()));
+        }
 
         final int firstIndex = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
         final int lastIndex = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
@@ -307,6 +316,8 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                             ScrollEventType.BEGIN_DRAG,
                             0, /* offsetX = 0, horizontal scrolling only */
                             computeVerticalScrollOffset(),
+                            0, // xVelocity
+                            0, // yVelocity
                             getWidth(),
                             computeVerticalScrollRange(),
                             getWidth(),
@@ -322,12 +333,15 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if (action == MotionEvent.ACTION_UP && mDragging) {
             mDragging = false;
+            mVelocityHelper.calculateVelocity(ev);
             getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
                     .dispatchEvent(ScrollEvent.obtain(
                             getId(),
                             ScrollEventType.END_DRAG,
                             0, /* offsetX = 0, horizontal scrolling only */
                             computeVerticalScrollOffset(),
+                            mVelocityHelper.getXVelocity(),
+                            mVelocityHelper.getYVelocity(),
                             getWidth(),
                             computeVerticalScrollRange(),
                             getWidth(),
