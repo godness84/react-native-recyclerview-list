@@ -2,11 +2,13 @@ package com.github.godness84.RNRecyclerViewList;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.SystemClock;
 import com.facebook.react.common.annotations.VisibleForTesting;
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
@@ -42,6 +45,12 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
     private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
     private final VelocityHelper mVelocityHelper = new VelocityHelper();
+
+    static class ScrollOptions {
+        @Nullable Float millisecondsPerInch;
+        @Nullable Float viewPosition;
+        @Nullable Float viewOffset;
+    }
 
     /**
      * Simple implementation of {@link ViewHolder} as it's an abstract class. The only thing we need
@@ -265,7 +274,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     public RecyclerViewBackedScrollView(Context context) {
         super(new ContextThemeWrapper(context, R.style.ScrollbarRecyclerView));
         setHasFixedSize(true);
-        getItemAnimator().setSupportsChangeAnimations(false);
+        ((DefaultItemAnimator)getItemAnimator()).setSupportsChangeAnimations(false);
         setLayoutManager(new LinearLayoutManager(context));
         setAdapter(new ReactListAdapter(this));
     }
@@ -359,11 +368,36 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     }
 
     @Override
-    public void smoothScrollToPosition(int position) {
-        this.smoothScrollToPositionWithVelocity(position, 0);
+    public void scrollToPosition(int position) {
+        this.scrollToPosition(position, new ScrollOptions());
     }
 
-    public void smoothScrollToPositionWithVelocity(int position, final float millisecondsPerInch) {
+    public void scrollToPosition(final int position, final ScrollOptions options) {
+        if (options.viewPosition != null) {
+            final LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
+            final ReactListAdapter adapter = (ReactListAdapter) getAdapter();
+            View view = adapter.getViewByItemIndex(position);
+            if (view != null) {
+                final int viewHeight = view.getHeight();
+                final int boxStart = layoutManager.getPaddingTop();
+                final int boxEnd = layoutManager.getHeight() - layoutManager.getPaddingBottom();
+                final int boxHeight = boxEnd - boxStart;
+                float viewOffset = options.viewOffset != null ? PixelUtil.toPixelFromDIP(options.viewOffset) : 0;
+                int offset = (int) ((boxHeight - viewHeight) * options.viewPosition + viewOffset);
+                layoutManager.scrollToPositionWithOffset(position, offset);
+                return;
+            }
+        }
+
+        super.scrollToPosition(position);
+    }
+
+    @Override
+    public void smoothScrollToPosition(int position) {
+        this.smoothScrollToPosition(position, new ScrollOptions());
+    }
+
+    public void smoothScrollToPosition(int position, final ScrollOptions options) {
         final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.getContext()) {
             @Override
             protected int getVerticalSnapPreference() {
@@ -377,10 +411,24 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
             @Override
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                if (millisecondsPerInch > 0) {
-                    return millisecondsPerInch / displayMetrics.densityDpi;
+                if (options.millisecondsPerInch != null) {
+                    return options.millisecondsPerInch / displayMetrics.densityDpi;
                 } else {
                     return super.calculateSpeedPerPixel(displayMetrics);
+                }
+            }
+
+            @Override
+            public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
+                int calc = super.calculateDtToFit(viewStart, viewEnd, boxStart, boxEnd, snapPreference);
+                if (options.viewPosition != null) {
+                    int viewHeight = viewEnd - viewStart;
+                    int boxHeight = boxEnd - boxStart;
+                    float viewOffset = options.viewOffset != null ? PixelUtil.toPixelFromDIP(options.viewOffset) : 0;
+                    float target = boxStart + (boxHeight - viewHeight) * options.viewPosition + viewOffset;
+                    return (int) (target - viewStart);
+                } else {
+                    return super.calculateDtToFit(viewStart, viewEnd, boxStart, boxEnd, snapPreference);
                 }
             }
         };
