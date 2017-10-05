@@ -21,7 +21,10 @@ import DataSource from 'react-native-recyclerview-list/lib/DataSource';
 
 var _gCounter = 1;
 function newItem() {
-  return _gCounter++;
+  return {
+    id: _gCounter++,
+    counter: 0
+  };
 }
 
 export default class example extends Component {
@@ -30,7 +33,7 @@ export default class example extends Component {
     var data = Array(10).fill().map((e,i) => newItem());
 
     this.state = {
-      dataSource: new DataSource(data, (item, index) => item)
+      dataSource: new DataSource(data, (item, index) => item.id)
     };
   }
 
@@ -48,10 +51,10 @@ export default class example extends Component {
           windowSize={20}
           initialScrollIndex={0}
           ListHeaderComponent={(
-            <View style={{ paddingTop: 5}} />
+            <View style={{ paddingTop: 15, backgroundColor: '#eee' }} />
           )}
           ListFooterComponent={(
-            <View style={{ paddingTop: 5}} />
+            <View style={{ paddingTop: 15, backgroundColor: '#eee'}} />
           )}
           ListEmptyComponent={(
             <View style={{ borderColor: '#e7e7e7', borderWidth: 1, margin: 10, padding: 20, }}>
@@ -73,7 +76,8 @@ export default class example extends Component {
         index={index}
         onRemove={() => this.remove(index)}
         onAddAbove={() => this.addAbove(index)}
-        onAddBelow={() => this.addBelow(index)} />
+        onAddBelow={() => this.addBelow(index)}
+        onIncrementCounter={() => this.incrementCounter(index)} />
     );
   }
 
@@ -102,8 +106,9 @@ export default class example extends Component {
           title={"rand"}
           onPress={() => {
             var index = Math.floor((Math.random() * this.state.dataSource.size()));
+            var item = this.state.dataSource.get(index);
             this._recycler && this._recycler.scrollToIndex({ index });
-            ToastAndroid.show('Scrolled to item: ' + this.state.dataSource.get(index), ToastAndroid.SHORT);
+            ToastAndroid.show('Scrolled to item: ' + item.id, ToastAndroid.SHORT);
           }} />
       </View>
     );
@@ -123,7 +128,7 @@ export default class example extends Component {
     //_gCounter = 1;
     var data = Array(10).fill().map((e,i) => newItem());
     this.setState({
-      dataSource: new DataSource(data, (item, index) => item)
+      dataSource: new DataSource(data, (item, index) => item.id)
     });
   }
 
@@ -148,6 +153,12 @@ export default class example extends Component {
     this.state.dataSource.splice(index+1, 0, newItem());
   }
 
+  incrementCounter(index) {
+    var item = this.state.dataSource.get(index);
+    item.counter++;
+    this.state.dataSource.set(index, item);
+  }
+
   addToTop(size) {
     var currCount = this.state.dataSource.size();
     var newItems = Array(size).fill().map((e,i)=>newItem());
@@ -162,26 +173,17 @@ export default class example extends Component {
 }
 
 class Item extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      counter: 0
-    }
-  }
-
   render() {
-    const { item, index, onRemove, onAddAbove, onAddBelow } = this.props;
-    const { counter } = this.state;
-    const imageSize = 70 + item % 70;
+    const { item, index, onRemove, onAddAbove, onAddBelow, onIncrementCounter } = this.props;
+    const { id, counter } = item;
+    const imageSize = 70 + id % 70;
 
     return (
       <TouchableNativeFeedback
-        onPress={() => this.setState({
-          counter: this.state.counter+1
-        })}>
+        onPress={onIncrementCounter}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 5 }}>
           <Image
-            source={{ uri: 'http://loremflickr.com/320/240?t=' + (item % 9) }}
+            source={{ uri: 'http://loremflickr.com/320/240?t=' + (id % 9) }}
             style={{
               width: imageSize,
               height: imageSize,
@@ -191,7 +193,7 @@ class Item extends Component {
             <Text style={{
               fontSize: 16,
               color: 'black'
-            }}>Item #{item}</Text>
+            }}>Item #{id}</Text>
             <Text style={{
               fontSize: 13,
               color: '#888'
