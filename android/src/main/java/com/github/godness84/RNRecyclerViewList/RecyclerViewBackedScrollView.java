@@ -1,40 +1,29 @@
 package com.github.godness84.RNRecyclerViewList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.PointF;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.common.logging.LoggingDelegate;
-import com.facebook.infer.annotation.Assertions;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.SystemClock;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.uimanager.UIManagerModule;
-import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
 import com.facebook.react.views.scroll.VelocityHelper;
-import com.github.godness84.RNRecyclerViewList.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wraps {@link RecyclerView} providing interface similar to `ScrollView.js` where each children
@@ -99,9 +88,9 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
                 if (oldHeight != newHeight) {
                     if (getParent() != null) {
                         requestLayout();
-                        ((View) getParent()).requestLayout();
+                        getParent().requestLayout();
                     }
-                };
+                }
             }
         };
 
@@ -276,7 +265,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
     public RecyclerViewBackedScrollView(Context context) {
         super(new ContextThemeWrapper(context, R.style.ScrollbarRecyclerView));
         setHasFixedSize(true);
-        ((DefaultItemAnimator) getItemAnimator()).setSupportsChangeAnimations(false);
+        getItemAnimator().setSupportsChangeAnimations(false);
         setLayoutManager(new LinearLayoutManager(context));
         setAdapter(new ReactListAdapter(this));
     }
