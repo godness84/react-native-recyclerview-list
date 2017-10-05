@@ -85,6 +85,7 @@ Prop name             | Description   | Type      | Default value
 `windowSize`          | Number of items to render at the top (and bottom) of the visible items | int | 30
 `initialListSize`     | Number of items to render at startup. | int | 10
 `initialScrollIndex`  | Index of the item to scroll at startup | int | none
+`initialScrollOffset` | Offset of the scroll position at startup | int | none
 `itemAnimatorEnabled` | Whether animates items when they are added or removed | boolean | true
 `ListHeaderComponent` | Component to render as header | component | none
 `ListFooterComponent` | Component to render as footer | component | none
@@ -99,7 +100,7 @@ Prop name             | Description   | Type      | Default value
 
 Method name           | Params                          | Description
 ----------------------|---------------------------------|------------
-`scrollToIndex`       | `{ index, animated, velocity }` | Scroll the list to the `index`ed item. It can be `animated`. `velocity` is the amount of milliseconds per inch.
+`scrollToIndex`       | `{ index, animated, velocity, viewPosition, viewOffset }` | Scroll the list to the `index`ed item such that it is positioned in the viewable area such that `viewPosition` 0 places it at the top, 1 at the bottom, and 0.5 centered in the middle. `viewOffset` is a fixed number of pixels to offset the final target position.  It can be `animated`. `velocity` is the amount of milliseconds per inch.
 `scrollToEnd`         | `{ animated, velocity }` | Scroll to the end of the list. It can be `animated`. `velocity` is the amount of milliseconds per inch.
 
 # DataSource
