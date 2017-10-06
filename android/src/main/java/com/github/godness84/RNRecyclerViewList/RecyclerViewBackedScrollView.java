@@ -376,9 +376,24 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         if (options.viewPosition != null) {
             final LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
             final ReactListAdapter adapter = (ReactListAdapter) getAdapter();
-            View view = adapter.getViewByItemIndex(position);
+            final View view = adapter.getViewByItemIndex(position);
             if (view != null) {
                 final int viewHeight = view.getHeight();
+
+                // In order to calculate the correct offset, we need the height of the target view.
+                // If the height of the view is not available it means RN has not calculated it yet.
+                // So let's listen to the layout change and we will retry scrolling.
+                if (viewHeight == 0) {
+                    view.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+                        @Override
+                        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                            view.removeOnLayoutChangeListener(this);
+                            scrollToPosition(position, options);
+                        }
+                    });
+                    return;
+                }
+
                 final int boxStart = layoutManager.getPaddingTop();
                 final int boxEnd = layoutManager.getHeight() - layoutManager.getPaddingBottom();
                 final int boxHeight = boxEnd - boxStart;
