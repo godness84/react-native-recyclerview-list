@@ -23,6 +23,7 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 
 - It's just for Android.
 - Just vertical linear layout. No fancy layouts as grid.
+- Currently supports React Native version 0.48.0 and above.
 
 ## Getting started
 
