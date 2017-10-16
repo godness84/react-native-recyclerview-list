@@ -107,7 +107,7 @@ export default class example extends Component {
           onPress={() => {
             var index = Math.floor((Math.random() * this.state.dataSource.size()));
             var item = this.state.dataSource.get(index);
-            this._recycler && this._recycler.scrollToIndex({ index });
+            this._recycler && this._recycler.scrollToIndex({ index, animated: false });
             ToastAndroid.show('Scrolled to item: ' + item.id, ToastAndroid.SHORT);
           }} />
       </View>

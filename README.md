@@ -3,6 +3,13 @@
 
 A RecyclerView implementation for ReactNative, that overcomes some limitations of `FlatList`, `VirtualizedList` and `ListView`.
 
+## Supported React Native Versions
+| Component Version     | RN Versions    |
+|-----------------------|---------------|
+| **0.1.x**          | **0.45, 0.46**   |
+| **0.2.0 - 0.2.2**  | **0.47, 0.48**   |
+| **0.2.3**          | **>= 0.49**   |
+
 ## Features
 
 - **Supports native animation during adding or removal of items** (as the classic RecyclerView does)
@@ -118,8 +125,3 @@ Method name           | Params                          | Description
 `get`                 | index                           | Returns the item at the specified index
 `size`                |                                 | Returns the length of the array
 `setDirty`			  | 								| Forces the RecyclerViewList to render again the visible items
-
-
-
-
-  

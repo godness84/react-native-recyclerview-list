@@ -1,7 +1,6 @@
-
 {
   "name": "react-native-recyclerview-list",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A RecyclerView implementation for React Native",
   "main": "index.js",
   "repository": {
@@ -21,5 +20,8 @@
   "peerDependencies": {
     "react": "^16.0.0-alpha.12",
     "react-native": "^0.48.3"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0"
   }
 }
