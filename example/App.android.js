@@ -16,8 +16,7 @@ import {
   ToastAndroid
 } from 'react-native';
 
-import RecyclerViewList from 'react-native-recyclerview-list';
-import DataSource from 'react-native-recyclerview-list/lib/DataSource';
+import RecyclerViewList, { DataSource } from 'react-native-recyclerview-list';
 
 var _gCounter = 1;
 function newItem() {
@@ -76,6 +75,8 @@ export default class example extends Component {
         index={index}
         onRemove={() => this.remove(index)}
         onAddAbove={() => this.addAbove(index)}
+        onMoveUp={() => this.moveUp(index)}
+        onMoveDown={() => this.moveDown(index)}
         onAddBelow={() => this.addBelow(index)}
         onIncrementCounter={() => this.incrementCounter(index)} />
     );
@@ -159,6 +160,14 @@ export default class example extends Component {
     this.state.dataSource.set(index, item);
   }
 
+  moveUp(index) {
+    this.state.dataSource.moveUp(index);
+  }
+
+  moveDown(index) {
+    this.state.dataSource.moveDown(index);
+  }
+
   addToTop(size) {
     var currCount = this.state.dataSource.size();
     var newItems = Array(size).fill().map((e,i)=>newItem());
@@ -174,7 +183,7 @@ export default class example extends Component {
 
 class Item extends Component {
   render() {
-    const { item, index, onRemove, onAddAbove, onAddBelow, onIncrementCounter } = this.props;
+    const { item, index, onRemove, onAddAbove, onAddBelow, onMoveUp, onMoveDown, onIncrementCounter } = this.props;
     const { id, counter } = item;
     const imageSize = 70 + id % 70;
 
@@ -202,6 +211,14 @@ class Item extends Component {
               : null }</Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
+            <Button
+              title={"\u25B2"}
+              onPress={onMoveUp} />
+            <View style={{ width: 5 }} />
+            <Button
+              title={"\u25BC"}
+              onPress={onMoveDown} />
+            <View style={{ width: 5 }} />
             <Button
               title={"\u002B\u25B2"}
               onPress={onAddAbove} />

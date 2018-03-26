@@ -9,7 +9,7 @@ export default class DataSource {
         'RecyclerViewList/DataSource: missing keyExtractor, it\'s strongly recommended to specify a keyExtractor function ' +
         'in order to use all the features correctly.'
       );
-      
+
       this._keyExtractor = (item, index) => {
         return JSON.stringify(item) + '_' + index;
       }
@@ -39,6 +39,30 @@ export default class DataSource {
 
   size() {
     return this._data.length;
+  }
+
+  moveUp(index) {
+    if (index <= 0) {
+      return;
+    }
+    const item = this._data[index];
+    this._data[index] = this._data[index - 1];
+    this._data[index - 1] = item;
+    this._listeners.forEach((listener) => {
+      listener && listener.onMoveUp && listener.onMoveUp(index);
+    });
+  }
+
+  moveDown(index) {
+    if (index >= this._data.length - 1) {
+      return;
+    }
+    const item = this._data[index];
+    this._data[index] = this._data[index + 1];
+    this._data[index + 1] = item;
+    this._listeners.forEach((listener) => {
+      listener && listener.onMoveDown && listener.onMoveDown(index);
+    });
   }
 
   set(index, item) {
