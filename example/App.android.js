@@ -16,8 +16,7 @@ import {
   ToastAndroid
 } from 'react-native';
 
-import RecyclerViewList from 'react-native-recyclerview-list';
-import DataSource from 'react-native-recyclerview-list/lib/DataSource';
+import RecyclerViewList, { DataSource } from 'react-native-recyclerview-list';
 
 var _gCounter = 1;
 function newItem() {
