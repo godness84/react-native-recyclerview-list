@@ -8,14 +8,11 @@
 	},
 	"dependencies": {
 		"react": "16.0.0-alpha.12",
-		"react-native": "^0.48.4",
-		"yarn": "^1.5.1"
+		"react-native": "^0.48.4"
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",
-		"babel-plugin-module-resolver": "^3.1.0",
 		"babel-preset-react-native": "^2.1.0",
-		"escape-string-regexp": "^1.0.5",
 		"jest": "20.0.4",
 		"react-native-recyclerview-list": "file:../library/",
 		"react-test-renderer": "16.0.0-alpha.12"
