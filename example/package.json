@@ -12,8 +12,9 @@
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",
-		"babel-preset-react-native": "2.1.0",
+		"babel-preset-react-native": "^2.1.0",
 		"jest": "20.0.4",
+		"react-native-recyclerview-list": "file:../library/",
 		"react-test-renderer": "16.0.0-alpha.12"
 	},
 	"jest": {
