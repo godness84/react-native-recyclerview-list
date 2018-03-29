@@ -8,7 +8,8 @@
     "url": "https://github.com/godness84/react-native-recyclerview-list.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf node_modules/ example/node_modules/ yarn.lock example/yarn.lock package-lock.json example/package-lock.json"
   },
   "keywords": [
     "recyclerview",
