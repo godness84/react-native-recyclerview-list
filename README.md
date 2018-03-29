@@ -140,29 +140,28 @@ Method name           | Params                          | Description
 │   ├── index.android.js
 │   ├── index.ios.js
 │   └── package.json
-├── library
-│   ├── android
-│   │   └── src
-│   │      └── main
-│   │          └── java
-│   │              └── com
-│   │                  └── github
-│   │                      └── godness84
-│   │                          └── RNRecyclerViewList
-│   │                              ├── ContentSizeChangeEvent.java
-│   │                              ├── NotAnimatedItemAnimator.java
-│   │                              ├── RNRecyclerviewListModule.java
-│   │                              ├── RNRecyclerviewListPackage.java
-│   │                              ├── RecyclerViewBackedScrollView.java
-│   │                              ├── RecyclerViewBackedScrollViewManager.java
-│   │                              ├── RecyclerViewItemView.java
-│   │                              ├── RecyclerViewItemViewManager.java
-│   │                              └── VisibleItemsChangeEvent.java
-│   ├── src
-│   │   ├── DataSource.js
-│   │   └── RecyclerViewList.js
-│   ├── index.js
-│   └── package.json
+├── android
+│   └── src
+│      └── main
+│          └── java
+│              └── com
+│                  └── github
+│                      └── godness84
+│                          └── RNRecyclerViewList
+│                              ├── ContentSizeChangeEvent.java
+│                              ├── NotAnimatedItemAnimator.java
+│                              ├── RNRecyclerviewListModule.java
+│                              ├── RNRecyclerviewListPackage.java
+│                              ├── RecyclerViewBackedScrollView.java
+│                              ├── RecyclerViewBackedScrollViewManager.java
+│                              ├── RecyclerViewItemView.java
+│                              ├── RecyclerViewItemViewManager.java
+│                              └── VisibleItemsChangeEvent.java
+├── src
+│   ├── DataSource.js
+│   └── RecyclerViewList.js
+├── index.js
+├── package.json
 ├── LICENSE.md
 └── README.md
 ```
