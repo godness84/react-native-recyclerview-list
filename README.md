@@ -8,7 +8,7 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 |-----------------------|---------------|
 | **0.1.x**          | **0.45, 0.46**   |
 | **0.2.0 - 0.2.2**  | **0.47, 0.48**   |
-| **0.2.3**          | **>= 0.49**   |
+| **0.2.3 - latest** | **>= 0.49**   |
 
 ## Features
 
@@ -124,7 +124,9 @@ Method name           | Params                          | Description
 `set`                 | index, item                     | Set the item at the specified index
 `get`                 | index                           | Returns the item at the specified index
 `size`                |                                 | Returns the length of the array
-`setDirty`			  | 								| Forces the RecyclerViewList to render again the visible items
+`setDirty`			      | 								                | Forces the RecyclerViewList to render again the visible items
+`moveUp`			        | index								            | Move the item up of 1 position
+`moveDown` 	          | index								            | Move the item down of 1 position
 
 # How to contribute to this library
 
