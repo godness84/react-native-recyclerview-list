@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import ReactNative, { View, requireNativeComponent, DeviceEventEmitter, StyleSheet, UIManager } from 'react-native';
+import ReactNative, { View, requireNativeComponent, DeviceEventEmitter, StyleSheet, UIManager, ViewPropTypes } from 'react-native';
 import PropTypes from 'prop-types';
 import DataSource from './DataSource';
 
 class RecyclerViewItem extends Component {
   static propTypes = {
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     itemIndex: PropTypes.number,
     shouldUpdate: PropTypes.bool,
     dataSource: PropTypes.object,
