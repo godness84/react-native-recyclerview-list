@@ -66,7 +66,7 @@ var rawdata = [
 
 // Wrap your data in a DataSource.
 // The second argument is the 'keyExtractor' function that returns the unique key of the item.
-var dataSource = new DataSource(rawdata, (item, index) => item.id);    
+var dataSource = new DataSource(rawdata, (item, index) => item.id);
 
 ...
 
@@ -80,7 +80,7 @@ render() {
         <Text>{item.text} - {index}</Text>
       )} />
   );
-}   
+}
 ```
 
 # Props
@@ -125,3 +125,56 @@ Method name           | Params                          | Description
 `get`                 | index                           | Returns the item at the specified index
 `size`                |                                 | Returns the length of the array
 `setDirty`			  | 								| Forces the RecyclerViewList to render again the visible items
+
+# How to contribute to this library
+
+## Directory structure
+
+```
+.
+├── example
+│   ├── __tests__
+│   ├── android
+│   ├── ios
+│   ├── app.json
+│   ├── index.android.js
+│   ├── index.ios.js
+│   └── package.json
+├── android
+│   └── src
+│      └── main
+│          └── java
+│              └── com
+│                  └── github
+│                      └── godness84
+│                          └── RNRecyclerViewList
+│                              ├── ContentSizeChangeEvent.java
+│                              ├── NotAnimatedItemAnimator.java
+│                              ├── RNRecyclerviewListModule.java
+│                              ├── RNRecyclerviewListPackage.java
+│                              ├── RecyclerViewBackedScrollView.java
+│                              ├── RecyclerViewBackedScrollViewManager.java
+│                              ├── RecyclerViewItemView.java
+│                              ├── RecyclerViewItemViewManager.java
+│                              └── VisibleItemsChangeEvent.java
+├── src
+│   ├── DataSource.js
+│   └── RecyclerViewList.js
+├── index.js
+├── package.json
+├── LICENSE.md
+└── README.md
+```
+
+If you have to change Android native code, you must have a look at the code in `library/android/src/main/java/com/github/godness84/RNRecyclerViewList`. Depending of your changes you might have to change the Javascript interface as well in `library/src/`.
+
+## Run the example app
+
+Make sure to have an emulator running or an Android device connected, and then:
+
+```
+$ cd example/
+$ react-native run-android
+```
+
+This will build the Android library (via `gradle`) and example app, then launch the main example activity on your connected device and run the Metro bundler at the same time.
