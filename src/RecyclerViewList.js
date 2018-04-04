@@ -83,6 +83,16 @@ class RecyclerView extends React.PureComponent {
       this._shouldUpdateAll = true;
     },
 
+    onMoveUp: (position) => {
+      this._notifyItemMoved(position, position - 1);
+      this._shouldUpdateAll = true;
+    },
+
+    onMoveDown: (position) => {
+      this._notifyItemMoved(position, position + 1);
+      this._shouldUpdateAll = true;
+    },
+
     onSplice: (start, deleteCount, ...items) => {
       if (deleteCount > 0) {
         this._notifyItemRangeRemoved(start, deleteCount);
@@ -308,6 +318,15 @@ class RecyclerView extends React.PureComponent {
     var from = Math.min(count, Math.max(0, firstVisibleIndex - windowSize));
     var to = Math.min(count, lastVisibleIndex + windowSize);
     return [from, to];
+  }
+
+  _notifyItemMoved(currentPosition, nextPosition) {
+    UIManager.dispatchViewManagerCommand(
+      ReactNative.findNodeHandle(this),
+      UIManager.AndroidRecyclerViewBackedScrollView.Commands.notifyItemMoved,
+      [currentPosition, nextPosition],
+    );
+    this.forceUpdate();
   }
 
   _notifyItemRangeInserted(position, count) {

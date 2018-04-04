@@ -34,6 +34,7 @@ public class RecyclerViewBackedScrollViewManager extends
     public static final int COMMAND_NOTIFY_ITEM_RANGE_REMOVED = 2;
     public static final int COMMAND_NOTIFY_DATASET_CHANGED = 3;
     public static final int COMMAND_SCROLL_TO_INDEX = 4;
+    public static final int COMMAND_NOTIFY_ITEM_MOVED = 5;
     private static final String TAG = "RecyclerViewManager";
 
     @Override
@@ -84,6 +85,7 @@ public class RecyclerViewBackedScrollViewManager extends
         return MapBuilder.of(
             "notifyItemRangeInserted", COMMAND_NOTIFY_ITEM_RANGE_INSERTED,
             "notifyItemRangeRemoved", COMMAND_NOTIFY_ITEM_RANGE_REMOVED,
+            "notifyItemMoved", COMMAND_NOTIFY_ITEM_MOVED,
             "notifyDataSetChanged", COMMAND_NOTIFY_DATASET_CHANGED,
             "scrollToIndex", COMMAND_SCROLL_TO_INDEX
         );
@@ -116,6 +118,15 @@ public class RecyclerViewBackedScrollViewManager extends
                 RecyclerViewBackedScrollView.ReactListAdapter adapter = (RecyclerViewBackedScrollView.ReactListAdapter) parent.getAdapter();
                 adapter.setItemCount(adapter.getItemCount() - count);
                 adapter.notifyItemRangeRemoved(position, count);
+                return;
+            }
+
+
+            case COMMAND_NOTIFY_ITEM_MOVED: {
+                final int currentPosition = args.getInt(0);
+                final int nextPosition = args.getInt(1);
+                RecyclerViewBackedScrollView.ReactListAdapter adapter = (RecyclerViewBackedScrollView.ReactListAdapter) parent.getAdapter();
+                adapter.notifyItemMoved(currentPosition, nextPosition);
                 return;
             }
 
