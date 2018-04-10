@@ -65,7 +65,7 @@ class RecyclerView extends React.PureComponent {
   }
 
   static defaultProps = {
-    dataSource: new DataSource(),
+    dataSource: new DataSource([], (item, i) => i),
     initialListSize: 10,
     windowSize: 30,
     itemAnimatorEnabled: true,
