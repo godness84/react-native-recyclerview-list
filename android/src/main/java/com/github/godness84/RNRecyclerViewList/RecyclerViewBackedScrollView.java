@@ -452,6 +452,11 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         this.getLayoutManager().startSmoothScroll(smoothScroller);
     }
 
+    public void setInverted(boolean inverted) {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
+        layoutManager.setReverseLayout(inverted);
+    }
+
     public void setItemAnimatorEnabled(boolean enabled) {
         if (enabled) {
             DefaultItemAnimator animator = new DefaultItemAnimator();

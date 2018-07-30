@@ -56,6 +56,7 @@ class RecyclerView extends React.PureComponent {
     initialListSize: PropTypes.number,
     initialScrollIndex: PropTypes.number,
     initialScrollOffset: PropTypes.number,
+    inverted: PropTypes.bool,
     itemAnimatorEnabled: PropTypes.bool,
     ListHeaderComponent: PropTypes.element,
     ListFooterComponent: PropTypes.element,
@@ -68,6 +69,7 @@ class RecyclerView extends React.PureComponent {
     dataSource: new DataSource([], (item, i) => i),
     initialListSize: 10,
     windowSize: 30,
+    inverted: false,
     itemAnimatorEnabled: true,
   }
 
