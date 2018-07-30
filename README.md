@@ -95,7 +95,7 @@ Prop name             | Description   | Type      | Default value
 `initialScrollIndex`  | Index of the item to scroll at startup | int | none
 `initialScrollOffset` | Offset of the scroll position at startup | int | none
 `inverted`            | Reverses the scrolling direction; the first model from the data source is rendered at the bottom | boolean | false
-`itemAnimatorEnabled` | Whether animates items when they are added or removed | bool | true
+`itemAnimatorEnabled` | Whether animates items when they are added or removed | boolean | true
 `ListHeaderComponent` | Component to render as header | component | none
 `ListFooterComponent` | Component to render as footer | component | none
 `ListEmptyComponent`  | Component to render in case of no items | component | none
