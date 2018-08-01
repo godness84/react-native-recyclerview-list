@@ -18,6 +18,9 @@ class RecyclerViewItem extends Component {
   shouldComponentUpdate(nextProps) {
     if (
       (nextProps.itemIndex !== this.props.itemIndex) ||
+      (nextProps.header !== this.props.header) ||
+      (nextProps.footer !== this.props.footer) ||
+      (nextProps.separator !== this.props.separator) ||
       (nextProps.shouldUpdate)
     ) {
       return true;
@@ -188,6 +191,7 @@ class RecyclerView extends React.PureComponent {
       ListFooterComponent,
       ListEmptyComponent,
       ItemSeparatorComponent,
+      inverted,
       ...rest
     } = this.props;
 
@@ -221,6 +225,11 @@ class RecyclerView extends React.PureComponent {
         let item = dataSource.get(i);
         let itemKey = dataSource.getKey(item, i);
         let shouldUpdate = this._needsItemUpdate(itemKey);
+        let isFirst = i == 0;
+        let isLast = i == end;
+        let header = inverted ? (isLast && footerElement) : (isFirst && headerElement);
+        let footer = inverted ? (isFirst && headerElement) : (isLast && footerElement);
+        let separator = inverted ? (!isFirst && separatorElement) : (!isLast && separatorElement);
         body.push(
           <RecyclerViewItem
             key={itemKey}
@@ -229,9 +238,9 @@ class RecyclerView extends React.PureComponent {
             shouldUpdate={shouldUpdate}
             dataSource={dataSource}
             renderItem={renderItem}
-            header={i == 0 && headerElement}
-            separator={i != end && separatorElement}
-            footer={i == end && footerElement} />
+            header={header}
+            separator={separator}
+            footer={footer} />
         );
       }
     } else if (ListEmptyComponent) {
@@ -258,7 +267,8 @@ class RecyclerView extends React.PureComponent {
       <NativeRecyclerView
         {...rest}
         itemCount={stateItemCount}
-        onVisibleItemsChange={this._handleVisibleItemsChange}>
+        onVisibleItemsChange={this._handleVisibleItemsChange}
+        inverted={inverted}>
         {body}
       </NativeRecyclerView>
     );
