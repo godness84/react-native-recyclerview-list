@@ -8,11 +8,11 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-  
+
 
 # Android/IntelliJ
 #
-build/
+**/build/*
 .idea
 .gradle
 local.properties
@@ -22,4 +22,3 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
-      
