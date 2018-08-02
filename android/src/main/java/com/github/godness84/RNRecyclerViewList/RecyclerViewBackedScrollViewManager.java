@@ -75,6 +75,11 @@ public class RecyclerViewBackedScrollViewManager extends
         parent.getAdapter().notifyDataSetChanged();
     }
 
+    @ReactProp(name = "inverted", defaultBoolean = false)
+    public void setInverted(RecyclerViewBackedScrollView parent, boolean inverted) {
+        parent.setInverted(inverted);
+    }
+
     @ReactProp(name = "itemAnimatorEnabled", defaultBoolean = true)
     public void setItemAnimatorEnabled(RecyclerViewBackedScrollView parent, boolean enabled) {
         parent.setItemAnimatorEnabled(enabled);

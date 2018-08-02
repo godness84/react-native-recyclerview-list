@@ -18,6 +18,7 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 - **Control the scrolling velocity**: the `velocity` param in the `scrollToIndex` method is exactly for this
 - **Initial scroll index**: specify the scroll position at startup, and there will be no flicker
 - **Low memory usage**: it renders just the visible items plus some extra items around
+- **Supports both scroll direction**: use the `inverted` prop to invert the scroll direction
 
 ## Caveats
 
@@ -93,6 +94,7 @@ Prop name             | Description   | Type      | Default value
 `initialListSize`     | Number of items to render at startup. | int | 10
 `initialScrollIndex`  | Index of the item to scroll at startup | int | none
 `initialScrollOffset` | Offset of the scroll position at startup | int | none
+`inverted`            | Reverses the scrolling direction; the first model from the data source is rendered at the bottom | boolean | false
 `itemAnimatorEnabled` | Whether animates items when they are added or removed | boolean | true
 `ListHeaderComponent` | Component to render as header | component | none
 `ListFooterComponent` | Component to render as footer | component | none

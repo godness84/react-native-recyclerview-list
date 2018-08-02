@@ -32,12 +32,13 @@ export default class example extends Component {
     var data = Array(10).fill().map((e,i) => newItem());
 
     this.state = {
-      dataSource: new DataSource(data, (item, index) => item.id)
+      dataSource: new DataSource(data, (item, index) => item.id),
+      inverted: false
     };
   }
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSource, inverted } = this.state;
 
     return (
       <View style={styles.container}>
@@ -49,11 +50,12 @@ export default class example extends Component {
           renderItem={this.renderItem}
           windowSize={20}
           initialScrollIndex={0}
+          inverted={inverted}
           ListHeaderComponent={(
             <View style={{ paddingTop: 15, backgroundColor: '#eee' }} />
           )}
           ListFooterComponent={(
-            <View style={{ paddingTop: 15, backgroundColor: '#eee'}} />
+            <View style={{ paddingTop: 15, backgroundColor: '#aaa'}} />
           )}
           ListEmptyComponent={(
             <View style={{ borderColor: '#e7e7e7', borderWidth: 1, margin: 10, padding: 20, }}>
@@ -111,6 +113,10 @@ export default class example extends Component {
             this._recycler && this._recycler.scrollToIndex({ index, animated: false });
             ToastAndroid.show('Scrolled to item: ' + item.id, ToastAndroid.SHORT);
           }} />
+        <View style={{ width: 5 }} />
+        <Button
+          title={"inv"}
+          onPress={() => { this.setState({inverted: !this.state.inverted}); } } />
       </View>
     );
   }
