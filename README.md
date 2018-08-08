@@ -153,7 +153,6 @@ Method name           | Params                          | Description
 │                      └── godness84
 │                          └── RNRecyclerViewList
 │                              ├── ContentSizeChangeEvent.java
-│                              ├── NotAnimatedItemAnimator.java
 │                              ├── RNRecyclerviewListModule.java
 │                              ├── RNRecyclerviewListPackage.java
 │                              ├── RecyclerViewBackedScrollView.java
