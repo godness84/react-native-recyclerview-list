@@ -8,7 +8,8 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 |-----------------------|---------------|
 | **0.1.x**          | **0.45, 0.46**   |
 | **0.2.0 - 0.2.2**  | **0.47, 0.48**   |
-| **0.2.3 - latest** | **>= 0.49**   |
+| **0.2.3 - 0.3.5**  | **0.49, 0.56**   |
+| **0.4.0 - latest** | **>= 0.57**   |
 
 ## Features
 
@@ -27,11 +28,13 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 
 ## Getting started
 
-`$ npm install react-native-recyclerview-list --save`
+```bash
+# Install
+yarn add react-native-fast-image
 
-### Mostly automatic installation
-
-`$ react-native link react-native-recyclerview-list`
+# Mostly Automatic linking. (other linking methods listed below)
+react-native link react-native-fast-image
+```
 
 ### Manual installation
 
@@ -153,7 +156,6 @@ Method name           | Params                          | Description
 │                      └── godness84
 │                          └── RNRecyclerViewList
 │                              ├── ContentSizeChangeEvent.java
-│                              ├── NotAnimatedItemAnimator.java
 │                              ├── RNRecyclerviewListModule.java
 │                              ├── RNRecyclerviewListPackage.java
 │                              ├── RecyclerViewBackedScrollView.java
@@ -178,6 +180,7 @@ Make sure to have an emulator running or an Android device connected, and then:
 
 ```
 $ cd example/
+$ yarn install
 $ react-native run-android
 ```
 

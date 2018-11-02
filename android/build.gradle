@@ -16,7 +16,7 @@ def safeExtGet(prop, fallback) {
 }
 
 def _reactNativeVersion = safeExtGet("reactNative", "+")
-def _recyclerviewLibVersion = safeExtGet("recyclerviewLibVersion", "26.0.3")
+def _recyclerviewVersion = safeExtGet("recyclerviewLibVersion", "26.0.3")
 
 android {
     compileSdkVersion safeExtGet("compileSdkVersion", 26)
@@ -39,6 +39,6 @@ repositories {
 
 dependencies {
     implementation "com.facebook.react:react-native:${_reactNativeVersion}"
-    implementation "com.android.support:recyclerview-v7:${_recyclerviewLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${_recyclerviewVersion}"
 }
   
