@@ -5,19 +5,26 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
 apply plugin: 'com.android.library'
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+def _reactNativeVersion = safeExtGet("reactNative", "+")
+def _recyclerviewLibVersion = safeExtGet("recyclerviewLibVersion", "26.0.3")
+
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion safeExtGet("compileSdkVersion", 26)
+    buildToolsVersion safeExtGet("buildToolsVersion", "26.0.3")
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 22
+        minSdkVersion safeExtGet("minSdkVersion", 16)
+        targetSdkVersion safeExtGet("targetSdkVersion", 26)
         versionCode 1
         versionName "1.0"
     }
@@ -31,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
+    implementation "com.facebook.react:react-native:${_reactNativeVersion}"
+    implementation "com.android.support:recyclerview-v7:${_recyclerviewLibVersion}"
 }
   
