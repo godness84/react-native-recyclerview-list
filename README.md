@@ -30,7 +30,7 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 
 ```bash
 # Install
-yarn add react-native-fast-image
+yarn add react-native-recyclerview-list
 
 # Mostly Automatic linking. (other linking methods listed below)
 react-native link react-native-fast-image
