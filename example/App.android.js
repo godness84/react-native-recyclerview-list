@@ -86,7 +86,7 @@ export default class example extends Component {
 
   renderTopControlPanel() {
     return (
-      <View style={{ flexDirection: 'row', padding: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e7e7e7' }}>
+      <View style={{ flexDirection: 'row', padding: 5, zIndex: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e7e7e7' }}>
         <Button
           title={"\u002B40 \u25B2"}
           onPress={() => this.addToTop(40)} />

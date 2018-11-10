@@ -1,10 +1,5 @@
 {
-  "presets": ["react-native"],
-  "plugins": [
-    ["module-resolver", {
-      "alias": {
-        "react-native-recyclerview-list": "../"
-      }
-    }]
-  ]
+  "presets": [
+    "module:metro-react-native-babel-preset"
+  ],
 }

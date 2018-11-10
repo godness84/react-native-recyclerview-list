@@ -172,7 +172,7 @@ public class RecyclerViewBackedScrollViewManager extends
     @Nullable
     Map getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.builder()
-                .put(ScrollEventType.SCROLL.getJSEventName(), MapBuilder.of("registrationName", "onScroll"))
+                .put(ScrollEventType.getJSEventName(ScrollEventType.SCROLL), MapBuilder.of("registrationName", "onScroll"))
                 .put(ContentSizeChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onContentSizeChange"))
                 .put(VisibleItemsChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onVisibleItemsChange"))
                 .build();
