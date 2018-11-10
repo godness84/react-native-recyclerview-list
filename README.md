@@ -33,7 +33,7 @@ A RecyclerView implementation for ReactNative, that overcomes some limitations o
 yarn add react-native-recyclerview-list
 
 # Mostly Automatic linking. (other linking methods listed below)
-react-native link react-native-fast-image
+react-native link react-native-recyclerview-list
 ```
 
 ### Manual installation
