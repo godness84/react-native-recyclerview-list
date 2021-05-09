@@ -18,7 +18,7 @@ public class ContentSizeChangeEvent extends Event<ContentSizeChangeEvent> {
   private final int mHeight;
 
   public ContentSizeChangeEvent(int viewTag, long timestampMs, int width, int height) {
-    super(viewTag);
+    super(viewTag, timestampMs);
     mWidth = width;
     mHeight = height;
   }

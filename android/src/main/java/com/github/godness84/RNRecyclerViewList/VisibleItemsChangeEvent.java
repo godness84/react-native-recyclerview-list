@@ -13,7 +13,7 @@ public class VisibleItemsChangeEvent extends Event<VisibleItemsChangeEvent> {
     private final int mLastIndex;
 
     public VisibleItemsChangeEvent(int viewTag, long timestampMs, int firstIndex, int lastIndex) {
-        super(viewTag);
+        super(viewTag, timestampMs);
         mFirstIndex = firstIndex;
         mLastIndex = lastIndex;
     }

@@ -1,72 +1,82 @@
 package com.github.godness84.RNRecyclerViewList;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Implementation of {@link RecyclerView.ItemAnimator} that disables all default animations.
  */
-/*package*/ class NotAnimatedItemAnimator extends RecyclerView.ItemAnimator {
+class NotAnimatedItemAnimator extends RecyclerView.ItemAnimator {
+    @Override
+    public boolean animateDisappearance(
+        @NonNull RecyclerView.ViewHolder viewHolder,
+        @NonNull ItemHolderInfo preLayoutInfo,
+        @Nullable ItemHolderInfo postLayoutInfo
+    ) {
+      dispatchAnimationStarted(viewHolder);
+      dispatchAnimationFinished(viewHolder);
 
-  @Override
-  public void runPendingAnimations() {
-    // nothing
-  }
-
-  @Override
-  public boolean animateRemove(RecyclerView.ViewHolder holder) {
-    dispatchRemoveStarting(holder);
-    dispatchRemoveFinished(holder);
-    return true;
-  }
-
-  @Override
-  public boolean animateAdd(RecyclerView.ViewHolder holder) {
-    dispatchAddStarting(holder);
-    dispatchAddFinished(holder);
-    return true;
-  }
-
-  @Override
-  public boolean animateMove(
-      RecyclerView.ViewHolder holder,
-      int fromX,
-      int fromY,
-      int toX,
-      int toY) {
-    dispatchMoveStarting(holder);
-    dispatchMoveFinished(holder);
-    return true;
-  }
-
-  @Override
-  public boolean animateChange(
-      RecyclerView.ViewHolder oldHolder,
-      RecyclerView.ViewHolder newHolder,
-      int fromLeft,
-      int fromTop,
-      int toLeft,
-      int toTop) {
-    dispatchChangeStarting(oldHolder, true);
-    dispatchChangeFinished(oldHolder, true);
-
-    // TODO: capire perchè a volte diventa NULL
-    if (newHolder != null) {
-      dispatchChangeStarting(newHolder, false);
-      dispatchChangeFinished(newHolder, false);
+      return true;
     }
-    return true;
-  }
 
-  @Override
-  public void endAnimation(RecyclerView.ViewHolder item) {
-  }
+    @Override
+    public boolean animateAppearance(
+        @NonNull RecyclerView.ViewHolder viewHolder,
+        @Nullable ItemHolderInfo preLayoutInfo,
+        @NonNull ItemHolderInfo postLayoutInfo
+    ) {
+      dispatchAnimationStarted(viewHolder);
+      dispatchAnimationFinished(viewHolder);
 
-  @Override
-  public void endAnimations() {
-  }
+      return true;
+    }
 
-  @Override
-  public boolean isRunning() {
-    return false;
-  }
+    @Override
+    public boolean animatePersistence(
+        @NonNull RecyclerView.ViewHolder viewHolder,
+        @NonNull ItemHolderInfo preLayoutInfo,
+        @NonNull ItemHolderInfo postLayoutInfo
+    ) {
+      dispatchAnimationStarted(viewHolder);
+      dispatchAnimationFinished(viewHolder);
+
+      return true;
+    }
+
+    @Override
+    public boolean animateChange(
+        @NonNull RecyclerView.ViewHolder oldHolder,
+        @NonNull RecyclerView.ViewHolder newHolder,
+        @NonNull ItemHolderInfo preLayoutInfo,
+        @NonNull ItemHolderInfo postLayoutInfo
+    ) {
+      dispatchAnimationStarted(oldHolder);
+      dispatchAnimationFinished(oldHolder);
+
+      dispatchAnimationStarted(newHolder);
+      dispatchAnimationFinished(newHolder);
+
+      return true;
+    }
+
+    @Override
+    public void runPendingAnimations() {
+      // Do nothing
+    }
+
+    @Override
+    public void endAnimation(@NonNull RecyclerView.ViewHolder item) {
+      // Do nothing
+    }
+
+    @Override
+    public void endAnimations() {
+      // Do nothing
+    }
+
+    @Override
+    public boolean isRunning() {
+      return false;
+    }
 }

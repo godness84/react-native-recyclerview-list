@@ -1,18 +1,18 @@
 package com.github.godness84.RNRecyclerViewList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PointF;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.SystemClock;
@@ -23,10 +23,12 @@ import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
-import com.facebook.react.views.scroll.VelocityHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * Wraps {@link RecyclerView} providing interface similar to `ScrollView.js` where each children
@@ -41,13 +43,13 @@ import java.util.List;
 @VisibleForTesting
 public class RecyclerViewBackedScrollView extends RecyclerView {
 
-    private final static String TAG = "RecyclerViewBackedScrol";
+    private final static String TAG = "RecyclerViewBackedScroll";
 
     private final OnScrollDispatchHelper mOnScrollDispatchHelper = new OnScrollDispatchHelper();
-    private final VelocityHelper mVelocityHelper = new VelocityHelper();
 
     static class ScrollOptions {
-        @Nullable Float millisecondsPerInch;
+        @Nullable
+        Float millisecondsPerInch;
         @Nullable Float viewPosition;
         @Nullable Float viewOffset;
     }
@@ -75,6 +77,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
      * (dimensions has been set in layouting process) so that size of this view match the size of
      * the view it wraps.
      */
+    @SuppressLint("ViewConstructor")
     static class RecyclableWrapperViewGroup extends ViewGroup {
 
         private ReactListAdapter mAdapter;
@@ -88,7 +91,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             mLastMeasuredWidth = 10;
         }
 
-        private OnLayoutChangeListener mChildLayoutChangeListener = new OnLayoutChangeListener() {
+        private final OnLayoutChangeListener mChildLayoutChangeListener = new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 int oldHeight = (oldBottom - oldTop);
@@ -240,11 +243,10 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
                     .dispatchEvent(ScrollEvent.obtain(
                             getId(),
+                            SystemClock.nanoTime(),
                             ScrollEventType.SCROLL,
                             0, /* offsetX = 0, horizontal scrolling only */
                             computeVerticalScrollOffset(),
-                            mOnScrollDispatchHelper.getXFlingVelocity(),
-                            mOnScrollDispatchHelper.getYFlingVelocity(),
                             getWidth(),
                             computeVerticalScrollRange(),
                             getWidth(),
@@ -311,11 +313,10 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
             getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
                     .dispatchEvent(ScrollEvent.obtain(
                             getId(),
+                            SystemClock.nanoTime(),
                             ScrollEventType.BEGIN_DRAG,
                             0, /* offsetX = 0, horizontal scrolling only */
                             computeVerticalScrollOffset(),
-                            0, // xVelocity
-                            0, // yVelocity
                             getWidth(),
                             computeVerticalScrollRange(),
                             getWidth(),
@@ -331,15 +332,13 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if (action == MotionEvent.ACTION_UP && mDragging) {
             mDragging = false;
-            mVelocityHelper.calculateVelocity(ev);
             getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
                     .dispatchEvent(ScrollEvent.obtain(
                             getId(),
+                            SystemClock.nanoTime(),
                             ScrollEventType.END_DRAG,
                             0, /* offsetX = 0, horizontal scrolling only */
                             computeVerticalScrollOffset(),
-                            mVelocityHelper.getXVelocity(),
-                            mVelocityHelper.getYVelocity(),
                             getWidth(),
                             computeVerticalScrollRange(),
                             getWidth(),
@@ -357,6 +356,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         if (!mRequestedLayout) {
             mRequestedLayout = true;
             this.post(new Runnable() {
+                @SuppressLint("WrongCall")
                 @Override
                 public void run() {
                     mRequestedLayout = false;
@@ -376,6 +376,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         if (options.viewPosition != null) {
             final LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
             final ReactListAdapter adapter = (ReactListAdapter) getAdapter();
+            assert adapter != null;
             final View view = adapter.getViewByItemIndex(position);
             if (view != null) {
                 final int viewHeight = view.getHeight();
@@ -421,7 +422,7 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
             @Override
             public PointF computeScrollVectorForPosition(int targetPosition) {
-                return ((LinearLayoutManager) this.getLayoutManager()).computeScrollVectorForPosition(targetPosition);
+                return ((LinearLayoutManager) Objects.requireNonNull(this.getLayoutManager())).computeScrollVectorForPosition(targetPosition);
             }
 
             @Override
@@ -435,7 +436,6 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
 
             @Override
             public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
-                int calc = super.calculateDtToFit(viewStart, viewEnd, boxStart, boxEnd, snapPreference);
                 if (options.viewPosition != null) {
                     int viewHeight = viewEnd - viewStart;
                     int boxHeight = boxEnd - boxStart;
@@ -449,11 +449,12 @@ public class RecyclerViewBackedScrollView extends RecyclerView {
         };
 
         smoothScroller.setTargetPosition(position);
-        this.getLayoutManager().startSmoothScroll(smoothScroller);
+        Objects.requireNonNull(this.getLayoutManager()).startSmoothScroll(smoothScroller);
     }
 
     public void setInverted(boolean inverted) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
+        assert layoutManager != null;
         layoutManager.setReverseLayout(inverted);
     }
 

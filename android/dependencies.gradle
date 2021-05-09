@@ -1,0 +1,17 @@
+ext {
+    versions = [
+        'code': 1,
+        'name': "1.0",
+        'buildTools': '29.0.3',
+        'compileSdk': 30,
+        'minSdk': 21,
+        'targetSdk': 28,
+        'recyclerView': '1.2.0'
+    ]
+
+    libraries = [
+        'androidx': [
+            'recyclerView': "androidx.recyclerview:recyclerview:$versions.recyclerView"
+        ]
+    ]
+}
